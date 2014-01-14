@@ -7,6 +7,8 @@
 
 ## 準備
 
+### WebDAV サーバ
+
 まずは WebDAV サーバを用意しましょう。Apache であればよほど古いバージョンのものでない限り標準で WebDAV 機能を持っています。httpd.conf にこんな設定を加えれば OK です。
 
 ```
@@ -21,6 +23,17 @@ Alias "/dav" "/storage/dav"
 ```
 
 このホストを仮に webdav.com とすると http://webdav.com/dav で WebDAV にアクセスできます。
+
+### クライアント
+
+Bundler を使って依存ライブラリをインストールするので、予め Bundler が必要です。  
+どうしても Bundler が使えない場合、依存ライブラリはひとつだけなので `gem install termcolor` でもOKです。
+
+```
+git clone https://github.com/moicci/webdav-sync.git
+cd webdav-sync
+bundle install
+```
 
 
 ## 使い方
