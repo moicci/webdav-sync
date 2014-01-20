@@ -38,7 +38,7 @@ module WebdavSync
       opt = OptionParser.new do |opt|
         opt.on('-v', '--verbose', 'verbose') {|value| Options[:verbose] = true }
         opt.on('-n', '--noexec', 'ディレクトリ作成、ファイルアップロード、ダウンロードの実行はしない') {|value| Options[:noexec] = true }
-        opt.on('-l dir', '--local dir', 'ローカルのトップディレクトリ') {|value| Options[:local] = value }
+        opt.on('-l dir', '--local dir', 'ローカルのトップディレクトリまたは唯一のアップロードファイル') {|value| Options[:local] = value }
         opt.on('-i file', '--includes file', '対象とする入力元ディレクトリを書いたファイル') {|value| Options[:includes] = value }
         opt.on('-e file', '--excludes file', '除外する入力元ディレクトリを書いたファイル') {|value| Options[:excludes] = value }
         opt.on('-E file', '--excludes-to file', '成功したディレクトリを出力するファイル') {|value| Options[:excludes_to] = value }
@@ -50,7 +50,14 @@ module WebdavSync
       end
 
       @excludes, @excluding_regexes = read_patterns(Options[:excludes])
-      @includes, @including_regexes = read_patterns(Options[:includes], '/')
+
+      if Options[:includes]
+        @includes, @including_regexes = read_patterns(Options[:includes], '/')
+      else
+        @includes = ARGV
+        @including_regexes = nil
+      end
+
       @excludes_to = open(Options[:excludes_to], 'a') if Options[:excludes_to]
     end
 
