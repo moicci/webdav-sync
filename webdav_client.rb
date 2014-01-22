@@ -81,7 +81,7 @@ class WebdavClient
     File.open(src_path, 'rb'){ |io|
       req.body_stream = io
       res = @http.request(req)
-      raise "Invalid HttpResponse Code: #{res.code} #{res.message}" unless res.code == '201'
+      validate_status(res)
     }
   end
 
@@ -92,7 +92,7 @@ class WebdavClient
   def mkdir(path)
     req = Net::HTTP::Mkcol.new(@basic_path + path)
     res = @http.request(req)
-    raise "Invalid HttpResponse Code: #{res.code} #{res.message}" unless res.code == '201'
+    validate_status(res)
   end
 
   # =delete=
@@ -102,7 +102,7 @@ class WebdavClient
   def delete(path)
     req = Net::HTTP::Delete.new(@basic_path + path)
     res = @http.request(req)
-    raise "Invalid HttpResponse Code: #{res.code} #{res.message}" unless res.code == '204'
+    validate_status(res, '204')
   end
 
   # =get=
@@ -114,7 +114,7 @@ class WebdavClient
     dest_path = File.basename(src_path) if dest_path.nil?()
     req = Net::HTTP::Get.new(@basic_path + src_path)
     res = @http.request(req)
-    raise "Invalid HttpResponse Code: #{res.code} #{res.message}" unless res.code == '200'
+    validate_status(res, '200')
     File.open(dest_path, "wb"){|io|
       io.write(res.body)
     }
@@ -129,7 +129,7 @@ class WebdavClient
     req = Net::HTTP::Copy.new(@basic_path + src_path)
     req['Destination'] = @basic_path + dest_path
     res = @http.request(req)
-    raise "Invalid HttpResponse Code: #{res.code} #{res.message}" unless res.code == '204'
+    validate_status(res, '204')
   end
 
   # =move=
@@ -141,7 +141,7 @@ class WebdavClient
     req = Net::HTTP::Move.new(@basic_path + src_path)
     req['Destination'] = @basic_path + dest_path
     res = @http.request(req)
-    raise "Invalid HttpResponse Code: #{res.code} #{res.message}" unless res.code == '204'
+    validate_status(res, '204')
   end
 
   def ls(path)
@@ -156,7 +156,7 @@ EOP
     end
 
     res = @http.propfind(@basic_path + path, prop, { 'Depth' => '1' })
-    raise "Invalid HttpResponse Code: #{res.code} #{res.message}" unless res.code == '207'
+    validate_status(res, '207')
     doc = REXML::Document.new res.body
     items = []
     first = true
@@ -173,6 +173,16 @@ EOP
     end
     items.sort {|x,y| x.path <=> y.path }
   end
+
+  def validate_status(res, expected = nil)
+    if expected
+      return if res.code == expected
+    else
+      return if res.code.start_with?('20')
+    end
+    raise "Invalid HttpResponse Code: #{res.code} #{res.message}"
+  end
+
 end
 
 if $0 == __FILE__

@@ -54,7 +54,7 @@ module WebdavSync
       if Options[:includes]
         @includes, @including_regexes = read_patterns(Options[:includes], '/')
       else
-        @includes = ARGV
+        @includes = ARGV unless ARGV.empty?
         @including_regexes = nil
       end
 
