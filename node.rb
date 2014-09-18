@@ -115,6 +115,11 @@ module WebdavSync
       length
     end
 
+    # DAV側のファイルを削除する
+    def delete_dav_file
+      Options.client.delete(@encoded)
+    end
+
     # ローカル側にファイルをダウンロードする
     def make_local_file
       Options.client.get(@encoded, local_path)
