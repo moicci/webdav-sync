@@ -115,6 +115,8 @@ class WebdavClient
     req = Net::HTTP::Get.new(@basic_path + src_path)
     res = @http.request(req)
     validate_status(res, '200')
+    dir = File.dirname(dest_path)
+    Dir.mkdir(dir) unless File.directory?(dir)
     File.open(dest_path, "wb"){|io|
       io.write(res.body)
     }
