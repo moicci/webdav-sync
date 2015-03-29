@@ -51,6 +51,14 @@ module WebdavSync
       end
     end
 
+    # Linuxのext4だと Dir.foreach がソートされていないので、ソート版を作った
+    def dir_entries(path)
+      Dir.entries(path).sort.each do |name|
+        # name は basename 部分
+        yield name
+      end
+    end
+
     # DAVへのアクセス
     def try_dav
 

@@ -35,7 +35,8 @@ module WebdavSync
       return unless File.directory?(parent.local_path)
 
       has_file = false
-      Dir.foreach(parent.local_path) do |name|
+      #Dir.foreach(parent.local_path) do |name|
+      dir_entries(parent.local_path) do |name|
         next if name.start_with?('.')
         full = "#{parent.local_path}/#{name}"
         node = parent.child(name)
