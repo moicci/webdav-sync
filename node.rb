@@ -161,6 +161,10 @@ module WebdavSync
       dav_items[name]
     end
 
+    def local_exists?
+      File.exists?(local_path)
+    end
+
     def directory?
       return @dav_item.directory? if @dav_item
       File.directory?(local_path)

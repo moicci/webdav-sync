@@ -39,7 +39,7 @@ module WebdavSync
       try_dav do
         time_from = Time.now
         length = yield
-        if length > 0
+        if length && length > 0
           seconds = Time.now - time_from
           if seconds > 0
             mb = length / 1024.0 / 1024.0

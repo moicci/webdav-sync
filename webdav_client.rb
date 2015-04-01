@@ -102,7 +102,7 @@ class WebdavClient
   def delete(path)
     req = Net::HTTP::Delete.new(@basic_path + path)
     res = @http.request(req)
-    validate_status(res, '204')
+    validate_status(res, ['204', '301'])
   end
 
   # =get=
@@ -178,7 +178,11 @@ EOP
 
   def validate_status(res, expected = nil)
     if expected
-      return if res.code == expected
+      if expected.is_a?(Array)
+        return if expected.include?(res.code)
+      else
+        return if res.code == expected
+      end
     else
       return if res.code.start_with?('20')
     end

@@ -12,9 +12,9 @@ module WebdavSync
       message = "  #{node.name}..."
       #if (Options[:newer] && node.dav_mtime < Options[:newer]) ||
       if node.local_size == node.dav_size
-        verbose(message, color:'green')
+        #verbose(message, color:'green')
       else
-        if execute(message, :force_verbose){ node.delete_local_file }
+        if execute(message, :force_verbose){ node.delete_dav_file }
           @script ||= Options[:script]
           if @script
             # バックスラを二つ続けないと sh のエラーになる
@@ -32,9 +32,13 @@ module WebdavSync
     def scan_dav(parent = nil)
       parent.children_by_dav do |node|
         if node.directory?
-          message = "#{parent.path}..."
-          verbose(message)
-          scan_dav(node)
+          message = "#{node.name}..."
+          if node.local_exists?
+            verbose(message)
+            scan_dav(node)
+          else
+            execute(message, :force_verbose){ node.delete_dav_file }
+          end
         elsif node.file?
           validate_file(node)
         end
