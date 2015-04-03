@@ -19,6 +19,10 @@ module WebdavSync
         end
       end
     end
+    
+    def debug(message)
+      puts message if Options[:debug]
+    end
 
     def error(e)
       #verbose("\nexception...\n#{e.backtrace.join('\n')}", 'red')

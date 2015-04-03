@@ -37,6 +37,7 @@ module WebdavSync
     def parse!
       opt = OptionParser.new do |opt|
         opt.on('-v', '--verbose', 'verbose') {|value| Options[:verbose] = true }
+        opt.on('-b', '--debug', 'debug print') {|value| Options[:debug] = true }
         opt.on('-n', '--noexec', 'ディレクトリ作成、ファイルアップロード、ダウンロードの実行はしない') {|value| Options[:noexec] = true }
         opt.on('-l dir', '--local dir', 'ローカルのトップディレクトリまたは唯一のアップロードファイル') {|value| Options[:local] = value }
         opt.on('-i file', '--includes file', '対象とする入力元ディレクトリを書いたファイル') {|value| Options[:includes] = value }

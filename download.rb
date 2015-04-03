@@ -14,20 +14,21 @@ module WebdavSync
       if node.local_size == node.dav_size
         verbose(message, color:'green')
       else
+        message = "#{message} local(#{node.local_size}) != dav(#{node.dav_size})..."
         if execute(message, :force_verbose){ node.make_local_file }
           @script ||= Options[:script]
           if @script
             # バックスラを二つ続けないと sh のエラーになる
             local_path = node.local_path.gsub('"', '\\"')
             script = "#{@script} \"#{local_path}\""
-            verbose("running script: #{script}")
+            debug("running script: #{script}")
             `#{script}`
           end
         end
       end
     end
 
-    # DAV側のフォルダ作成
+    # ローカル側のフォルダ作成
     def mkdir(node)
       message = "#{node.path}..."
       unless node.on_local?
