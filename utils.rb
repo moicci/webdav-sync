@@ -43,7 +43,7 @@ module WebdavSync
       try_dav do
         time_from = Time.now
         length = yield
-        if length > 0
+        if length && length > 0
           seconds = Time.now - time_from
           if seconds > 0
             mb = length / 1024.0 / 1024.0
@@ -52,6 +52,14 @@ module WebdavSync
           end
         end
         verbose(result, force_verbose:force_verbose)
+      end
+    end
+
+    # Linuxのext4だと Dir.foreach がソートされていないので、ソート版を作った
+    def dir_entries(path)
+      Dir.entries(path).sort.each do |name|
+        # name は basename 部分
+        yield name
       end
     end
 
